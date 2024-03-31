@@ -3,11 +3,13 @@ from aiogram.filters.command import Command
 from aiogram.types import Message, InlineKeyboardButton, ReplyKeyboardRemove, CallbackQuery
 from classes import ItemsList
 from aiogram import F
+from database import add_new_user, create_item_list, edit_item_list, remove_item_list, read_item_list
 
 from bot import dp
 
 
 async def start(message: Message):
+    add_new_user(message.from_user.id, message.from_user.full_name)
     await message.answer(
         'Відправ мені список одним повідомленням!',
         reply_markup=ReplyKeyboardRemove()
@@ -37,7 +39,7 @@ async def shop_list(message: Message):
         reply_markup=keyboard.as_markup()
     )
 
-    dp[f'{user_id}_{message_id}'] = items_list
+    create_item_list(user_id, message_id, items_list)
 
 
 async def call_back(callback: CallbackQuery):
@@ -50,7 +52,7 @@ async def call_back(callback: CallbackQuery):
 async def edit_item(callback: CallbackQuery):
     keyboard = InlineKeyboardBuilder()
     user_id, message_id, item_idx = callback.data.split('_')
-    items_list = dp[f'{user_id}_{message_id}']
+    items_list = read_item_list(user_id, message_id)
     item = items_list[int(item_idx)]
 
     if item.is_added:
@@ -79,12 +81,13 @@ async def edit_item(callback: CallbackQuery):
 
     await callback.answer()
 
-    dp[f'{user_id}_{message_id}'] = items_list
+    edit_item_list(user_id, message_id, items_list)
 
 
 async def finish(callback: CallbackQuery):
     _, user_id, message_id = callback.data.split('_')
-    items_list = dp[f'{user_id}_{message_id}']
+    items_list = read_item_list(user_id, message_id)
+    remove_item_list(user_id, message_id)
 
     await callback.message.edit_text(
         text=f'Ваш список покупок:\n{str(items_list)}',

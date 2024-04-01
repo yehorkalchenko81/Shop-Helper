@@ -1,12 +1,21 @@
-from handlers import start_handlers
-from bot import dp, bot
+from aiogram import Bot, Dispatcher
 from asyncio import run
-from database import create_table
+import logging
+
+from database import create_tables
+from handlers import start_router, main_router
 
 
 async def main():
-    create_table()
-    start_handlers()
+    logging.basicConfig(level=logging.INFO)
+    bot = Bot(token='YOUR_TOKEN')
+    dp = Dispatcher()
+
+    create_tables()
+
+    dp.include_router(start_router)
+    dp.include_router(main_router)
+
     await dp.start_polling(bot)
 
 

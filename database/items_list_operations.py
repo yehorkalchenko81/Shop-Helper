@@ -2,46 +2,10 @@ import sqlite3 as sq
 import pickle
 
 
-def create_table():
-    with sq.connect('database.db') as con:
-        cur = con.cursor()
-
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS users (
-            user_id TEXT NOT NULL PRIMARY KEY,
-            user_name TEXT NOT NULL
-        )''')
-
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS items_list_table (
-            user_id TEXT NOT NULL,
-            message_id TEXT NOT NULL,
-            items_list BLOB NOT NULL,
-            keyboard BLOB NOT NULL
-        )''')
-
-        con.commit()
-
-
-def add_new_user(user_id, user_name):
-    with sq.connect('database.db') as con:
-        cur = con.cursor()
-
-        try:
-            cur.execute('''
-                INSERT INTO users
-                VALUES (?, ?)
-            ''', (user_id, user_name))
-        except sq.IntegrityError:
-            pass
-
-        con.commit()
-
-
 def create_item_list(user_id, message_id, items_list, keyboard):
     seralized_item_list = pickle.dumps(items_list)
     seralized_keyboard = pickle.dumps(keyboard)
-    with sq.connect('database.db') as con:
+    with sq.connect('../database.db') as con:
         cur = con.cursor()
 
         cur.execute('''
@@ -53,7 +17,7 @@ def create_item_list(user_id, message_id, items_list, keyboard):
 
 
 def read_item_list(user_id, message_id):
-    with sq.connect('database.db') as con:
+    with sq.connect('../database.db') as con:
         cur = con.cursor()
 
         cur.execute('''
@@ -71,7 +35,7 @@ def read_item_list(user_id, message_id):
 def edit_item_list(user_id, message_id, items_list, keyboard):
     seralized_item_list = pickle.dumps(items_list)
     seralized_keyboard = pickle.dumps(keyboard)
-    with sq.connect('database.db') as con:
+    with sq.connect('../database.db') as con:
         cur = con.cursor()
 
         cur.execute('''
@@ -84,7 +48,7 @@ def edit_item_list(user_id, message_id, items_list, keyboard):
 
 
 def remove_item_list(user_id, message_id):
-    with sq.connect('database.db') as con:
+    with sq.connect('../database.db') as con:
         cur = con.cursor()
 
         cur.execute('''

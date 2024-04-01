@@ -39,7 +39,7 @@ async def shop_list(message: Message):
         reply_markup=keyboard.as_markup()
     )
 
-    create_item_list(user_id, message_id, items_list)
+    create_item_list(user_id, message_id, items_list, keyboard)
 
 
 async def call_back(callback: CallbackQuery):
@@ -50,28 +50,15 @@ async def call_back(callback: CallbackQuery):
 
 
 async def edit_item(callback: CallbackQuery):
-    keyboard = InlineKeyboardBuilder()
     user_id, message_id, item_idx = callback.data.split('_')
-    items_list = read_item_list(user_id, message_id)
+    items_list, keyboard = read_item_list(user_id, message_id)
     item = items_list[int(item_idx)]
 
-    if item.is_added:
-        item.remove()
-    else:
-        item.add()
+    item.remove() if item.is_added else item.add()
 
-    for idx, item in enumerate(items_list):
-        keyboard.row(InlineKeyboardButton(
-            text=str(item),
-            callback_data=f'{user_id}_{message_id}_{idx}')
-        )
-
-    keyboard.row(
-        InlineKeyboardButton(
-            text='Завершити',
-            callback_data=f'finish_{user_id}_{message_id}'
-        )
-    )
+    keyboard = keyboard.export()
+    keyboard[int(item_idx)][0].text = str(item)
+    keyboard = InlineKeyboardBuilder(keyboard)
 
     await callback.message.edit_text(
         text='Ваш список покупок:',
@@ -81,12 +68,12 @@ async def edit_item(callback: CallbackQuery):
 
     await callback.answer()
 
-    edit_item_list(user_id, message_id, items_list)
+    edit_item_list(user_id, message_id, items_list, keyboard)
 
 
 async def finish(callback: CallbackQuery):
     _, user_id, message_id = callback.data.split('_')
-    items_list = read_item_list(user_id, message_id)
+    items_list, *_ = read_item_list(user_id, message_id)
     remove_item_list(user_id, message_id)
 
     await callback.message.edit_text(

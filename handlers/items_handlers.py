@@ -65,3 +65,8 @@ async def finish(callback: CallbackQuery):
     )
 
     await callback.answer()
+
+
+@router.message()
+async def shop_list(message: Message):
+    await message.delete()

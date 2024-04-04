@@ -2,7 +2,9 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
+from datetime import datetime
 
+from logger import logger
 from database import read_shop_cards, remove_shop_cards
 from states import ConfirmDeleteState
 from keyboards import confirmating_keyboard, cancel_add_button
@@ -24,6 +26,14 @@ async def show_card(callback: CallbackQuery):
         reply_markup=cancel_add_button
     )
 
+    logger(f'{"-" * 25}\n'
+           f'Func: show_card\n'
+           f'User_id: {callback.from_user.id}\n'
+           f'User_name: {callback.from_user.full_name}\n'
+           f'User_callback: {callback.data}\n'
+           f'Time: {datetime.now()}\n'
+           )
+
 
 @router.callback_query(StateFilter(None), F.data.contains('delcard_'))
 async def delete_card(callback: CallbackQuery, state: FSMContext):
@@ -40,6 +50,14 @@ async def delete_card(callback: CallbackQuery, state: FSMContext):
     await state.update_data(shop_name=shop_name, user_id=callback.from_user.id)
 
     await state.set_state(ConfirmDeleteState.waiting_confirmation)
+
+    logger(f'{"-" * 25}\n'
+           f'Func: delete_card\n'
+           f'User_id: {callback.from_user.id}\n'
+           f'User_name: {callback.from_user.full_name}\n'
+           f'User_callback: {callback.data}\n'
+           f'Time: {datetime.now()}\n'
+           )
 
 
 @router.callback_query(StateFilter(ConfirmDeleteState.waiting_confirmation))
@@ -66,3 +84,11 @@ async def collect_chose(callback: CallbackQuery, state: FSMContext):
         )
 
     await state.clear()
+
+    logger(f'{"-" * 25}\n'
+           f'Func: collect_chose\n'
+           f'User_id: {callback.from_user.id}\n'
+           f'User_name: {callback.from_user.full_name}\n'
+           f'User_callback: {callback.data}\n'
+           f'Time: {datetime.now()}\n'
+           )

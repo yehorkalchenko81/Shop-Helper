@@ -1,11 +1,13 @@
 from aiogram import Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
+from datetime import datetime
 from aiogram.types import (
     Message,
     CallbackQuery
 )
 
+from logger import logger
 from states import ShopCardStates
 from database import add_shop_card, read_shop_cards
 from keyboards import cancel_add_button
@@ -24,6 +26,13 @@ async def add_card(callback: CallbackQuery, state: FSMContext):
 
     await state.update_data(bot_message=callback.message)
     await state.set_state(ShopCardStates.waiting_shop_name)
+
+    logger(f'{"-" * 25}\n'
+           f'Func: add_card\n'
+           f'User_id: {callback.from_user.id}\n'
+           f'User_name: {callback.from_user.full_name}\n'
+           f'Time: {datetime.now()}\n'
+           )
 
 
 @router.message(StateFilter(ShopCardStates.waiting_shop_name), F.text)
@@ -57,12 +66,18 @@ async def catching_shop_name(message: Message, state: FSMContext):
 
     await state.set_state(ShopCardStates.waiting_shop_card)
 
+    logger(f'{"-" * 25}\n'
+           f'Func: catching_shop_name\n'
+           f'User_id: {message.from_user.id}\n'
+           f'User_name: {message.from_user.full_name}\n'
+           f'User_input: {message.text}\n'
+           f'Time: {datetime.now()}\n'
+           )
+
 
 @router.message(StateFilter(ShopCardStates.waiting_shop_card), F.photo)
 async def waiting_shop_card(message: Message, state: FSMContext):
     await message.delete()
-
-    await state.update_data(photo=message.photo)
 
     data = await state.get_data()
     shop_name = data['shop_name']
@@ -78,6 +93,14 @@ async def waiting_shop_card(message: Message, state: FSMContext):
     add_shop_card(message.from_user.id, shop_name, message.photo[-1].file_id)
 
     await state.clear()
+
+    logger(f'{"-" * 25}\n'
+           f'Func: show_card_list\n'
+           f'User_id: {message.from_user.id}\n'
+           f'User_name: {message.from_user.full_name}\n'
+           f'User_photo: {message.photo[-1].file_id}\n'
+           f'Time: {datetime.now()}\n'
+           )
 
 
 @router.message(StateFilter(ShopCardStates))

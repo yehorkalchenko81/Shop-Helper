@@ -7,7 +7,8 @@ from handlers import (
     items_router,
     show_cards_router,
     add_new_card_router,
-    shop_cards_operations_router
+    shop_cards_operations_router,
+    trash_router
 )
 
 
@@ -19,6 +20,7 @@ async def main():
     dp.include_router(add_new_card_router)
     dp.include_router(shop_cards_operations_router)
     dp.include_router(items_router)
+    dp.include_router(trash_router)
 
     await dp.start_polling(bot)
 

@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from database import read_shop_cards, remove_shop_cards
 from states import ConfirmDeleteState
-from keyboards import confirmating_keyboard, view_my_cards_button
+from keyboards import confirmating_keyboard, cancel_add_button
 
 router = Router()
 
@@ -19,7 +19,10 @@ async def show_card(callback: CallbackQuery):
 
     await callback.message.delete()
 
-    await callback.message.answer_photo(photo=shop_card)
+    await callback.message.answer_photo(
+        photo=shop_card,
+        reply_markup=cancel_add_button
+    )
 
 
 @router.callback_query(StateFilter(None), F.data.contains('delcard_'))
@@ -28,8 +31,6 @@ async def delete_card(callback: CallbackQuery, state: FSMContext):
 
     raw_data = read_shop_cards(callback.from_user.id)
     shop_card, *_ = [row[0] for row in raw_data if shop_name in row]
-
-    # await callback.message.delete()
 
     await callback.message.edit_text(
         text=f'Ви впевнені, що хочете видалити карту магазину {shop_name}',
@@ -45,6 +46,7 @@ async def delete_card(callback: CallbackQuery, state: FSMContext):
 async def collect_chose(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     shop_name = data['shop_name']
+
     if callback.data == 'deleting_confirmed':
         user_id = data['user_id']
 
@@ -54,13 +56,13 @@ async def collect_chose(callback: CallbackQuery, state: FSMContext):
 
         await callback.message.answer(
             text=f'Ви видалити карту магазину {shop_name}',
-            reply_markup=view_my_cards_button
+            reply_markup=cancel_add_button
         )
-
-        await state.clear()
     else:
         await callback.message.delete()
         await callback.message.answer(
             text=f'Ви відмінили видалення картки магазину {shop_name}',
-            reply_markup=view_my_cards_button
+            reply_markup=cancel_add_button
         )
+
+    await state.clear()

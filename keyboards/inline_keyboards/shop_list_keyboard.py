@@ -27,23 +27,42 @@ def set_shop_cards_keyboard(user_id):
     keyboard.row(
         InlineKeyboardButton(
             text='Додати картку',
-            callback_data=f'add_card'
+            callback_data='add_card'
+        )
+    )
+
+    keyboard.row(
+        InlineKeyboardButton(
+            text='Назад',
+            callback_data='start_menu'
         )
     )
 
     return keyboard
 
 
-confirmating_keyboard = InlineKeyboardMarkup(inline_keyboard=[
-    [
-        InlineKeyboardButton(
-            text='✅',
-            callback_data='deleting_confirmed'
-        ),
-        InlineKeyboardButton(
-            text='❌',
-            callback_data='deleting_canceled'
-        )
+confirmating_keyboard = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text='✅',
+                callback_data='deleting_confirmed'
+            ),
+            InlineKeyboardButton(
+                text='❌',
+                callback_data='deleting_canceled'
+            )
+        ]
     ]
-]
+)
+
+cancel_add_button = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text='Назад',
+                callback_data='view_my_cards'
+            )
+        ]
+    ]
 )

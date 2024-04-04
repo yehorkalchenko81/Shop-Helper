@@ -8,3 +8,7 @@ class ShopCardStates(StatesGroup):
 
 class ConfirmDeleteState(StatesGroup):
     waiting_confirmation = State()
+
+
+class ItemsListState(StatesGroup):
+    waiting_items_list = State()

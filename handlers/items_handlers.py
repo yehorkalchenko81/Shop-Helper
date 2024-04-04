@@ -1,7 +1,10 @@
 from aiogram.types import Message, CallbackQuery
+from aiogram.filters import StateFilter
+from aiogram.fsm.context import FSMContext
 from aiogram import F, Router
 
-from keyboards import set_items_list_keyboard, edit_items_list_keyboard
+from keyboards import set_items_list_keyboard, edit_items_list_keyboard, main_menu_button
+from states import ItemsListState
 from utils import ItemsList
 from database import (
     create_item_list,
@@ -13,9 +16,23 @@ from database import (
 router = Router()
 
 
-@router.message(F.text)
-async def shop_list(message: Message):
+@router.callback_query(StateFilter(None), F.data == 'new_items_list')
+async def new_items_list(callback: CallbackQuery, state: FSMContext):
+    await callback.message.edit_text(
+        text='Напишіть список одним повідомленням',
+        reply_markup=main_menu_button
+    )
+    await state.update_data(bot_message=callback.message)
+    await state.set_state(ItemsListState.waiting_items_list)
+
+
+@router.message(StateFilter(ItemsListState.waiting_items_list), F.text)
+async def shop_list(message: Message, state: FSMContext):
+    data = await state.get_data()
+    bot_message: Message = data['bot_message']
+    await bot_message.delete()
     await message.delete()
+    await state.clear()
 
     user_id = message.from_user.id
     message_id = message.message_id
@@ -61,12 +78,8 @@ async def finish(callback: CallbackQuery):
     remove_item_list(user_id, message_id)
 
     await callback.message.edit_text(
-        text=f'Ваш список покупок:\n{str(items_list)}'
+        text=f'Ваш список покупок:\n{str(items_list)}',
+        reply_markup=main_menu_button
     )
 
     await callback.answer()
-
-
-@router.message()
-async def shop_list(message: Message):
-    await message.delete()

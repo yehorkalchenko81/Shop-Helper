@@ -1,5 +1,5 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.types import InlineKeyboardButton
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 def set_items_list_keyboard(user_id, message_id, items_list):
@@ -29,3 +29,13 @@ def edit_items_list_keyboard(keyboard, item_idx, item):
     keyboard = InlineKeyboardBuilder(keyboard)
 
     return keyboard
+
+
+main_menu_button = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(
+            text='Назад',
+            callback_data='start_menu'
+        )]
+    ]
+)

@@ -5,7 +5,7 @@ import pickle
 def create_item_list(user_id, message_id, items_list, keyboard):
     seralized_item_list = pickle.dumps(items_list)
     seralized_keyboard = pickle.dumps(keyboard)
-    with sq.connect('../database.db') as con:
+    with sq.connect('database.db') as con:
         cur = con.cursor()
 
         cur.execute('''
@@ -17,7 +17,7 @@ def create_item_list(user_id, message_id, items_list, keyboard):
 
 
 def read_item_list(user_id, message_id):
-    with sq.connect('../database.db') as con:
+    with sq.connect('database.db') as con:
         cur = con.cursor()
 
         cur.execute('''
@@ -35,7 +35,7 @@ def read_item_list(user_id, message_id):
 def edit_item_list(user_id, message_id, items_list, keyboard):
     seralized_item_list = pickle.dumps(items_list)
     seralized_keyboard = pickle.dumps(keyboard)
-    with sq.connect('../database.db') as con:
+    with sq.connect('database.db') as con:
         cur = con.cursor()
 
         cur.execute('''
@@ -48,7 +48,7 @@ def edit_item_list(user_id, message_id, items_list, keyboard):
 
 
 def remove_item_list(user_id, message_id):
-    with sq.connect('../database.db') as con:
+    with sq.connect('database.db') as con:
         cur = con.cursor()
 
         cur.execute('''

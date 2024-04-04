@@ -2,7 +2,7 @@ import sqlite3 as sq
 
 
 def add_new_user(user_id, user_name):
-    with sq.connect('../database.db') as con:
+    with sq.connect('database.db') as con:
         cur = con.cursor()
 
         try:

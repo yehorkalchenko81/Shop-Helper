@@ -2,13 +2,15 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton
 
 
-def create_items_list_keyboard(items_list, user_id, message_id):
+def set_items_list_keyboard(user_id, message_id, items_list):
     keyboard = InlineKeyboardBuilder()
 
     for idx, item in enumerate(items_list):
-        keyboard.row(InlineKeyboardButton(
-            text=str(item),
-            callback_data=f'{user_id}_{message_id}_{idx}')
+        keyboard.row(
+            InlineKeyboardButton(
+                text=str(item),
+                callback_data=f'edit_{user_id}_{message_id}_{idx}'
+            )
         )
 
     keyboard.row(
@@ -27,4 +29,3 @@ def edit_items_list_keyboard(keyboard, item_idx, item):
     keyboard = InlineKeyboardBuilder(keyboard)
 
     return keyboard
-

@@ -1,14 +1,16 @@
-from aiogram.filters.command import Command
+from aiogram.filters.command import CommandStart
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram import Router
 
 from database import add_new_user
 
-start_router = Router()
+router = Router()
 
 
-@start_router.message(Command('strat'))
+@router.message(CommandStart())
 async def start(message: Message):
+    await message.delete()
+
     add_new_user(message.from_user.id, message.from_user.full_name)
 
     await message.answer(

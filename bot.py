@@ -2,6 +2,7 @@ from asyncio import run
 
 from database import create_tables
 from create_bot import bot, dp
+from logger import decorate_callbacks
 from handlers import (
     start_router,
     items_router,
@@ -21,6 +22,8 @@ async def main():
     dp.include_router(shop_cards_operations_router)
     dp.include_router(items_router)
     dp.include_router(trash_router)
+
+    decorate_callbacks(dp)
 
     await dp.start_polling(bot)
 

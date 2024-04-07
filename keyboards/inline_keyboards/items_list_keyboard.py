@@ -9,7 +9,7 @@ def set_items_list_keyboard(user_id, message_id, items_list):
         keyboard.row(
             InlineKeyboardButton(
                 text=str(item),
-                callback_data=f'edit_{user_id}_{message_id}_{idx}'
+                callback_data=f'edit_{user_id}_{message_id}_{idx}_{item.name}'
             )
         )
 

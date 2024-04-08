@@ -15,7 +15,10 @@ def _get_function_info(function: Callable, arg) -> str | None:
     if isinstance(function, types.FunctionType):
         name = function.__name__
         user = arg.from_user.full_name
-        user_input = 'Text - ' + arg.text.replace('\n', ' \\n ') if isinstance(arg, Message) else 'CallBack - ' + arg.data
+        try:
+            user_input = 'Text - ' + arg.text.replace('\n', ' \\n ') if isinstance(arg, Message) else 'CallBack - ' + arg.data
+        except:
+            user_input = 'None type'
         return f'Func: {name}, User_name: {user}, User_input: {user_input}, Time: {datetime.now()}'
     else:
         return None

@@ -1,6 +1,6 @@
 class ItemsList:
     def __init__(self, text: str):
-        self.items = [Item(string.strip()) for string in text.split('\n') if string and '[' not in string]
+        self.items = [Item(string.strip()) for string in text.split('\n') if string.replace(' ', '').isalnum()]
 
     def __getitem__(self, key):
         return self.items[key]
